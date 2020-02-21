@@ -7,8 +7,10 @@ import com.arctouch.codechallenge.R
 import com.arctouch.codechallenge.api.TmdbApi
 import com.arctouch.codechallenge.data.Cache
 import com.arctouch.codechallenge.home.HomeActivity
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 
 class SplashActivity : AppCompatActivity() {
@@ -19,13 +21,13 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.splash_activity)
 
-        api.genres(TmdbApi.API_KEY, TmdbApi.DEFAULT_LANGUAGE)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    Cache.cacheGenres(it.genres)
-                    startActivity(Intent(this, HomeActivity::class.java))
-                    finish()
-                }
+        GlobalScope.launch(Dispatchers.IO) {
+            val genreResult = api.genres(TmdbApi.API_KEY, TmdbApi.DEFAULT_LANGUAGE)
+            Cache.cacheGenres(genreResult.genres)
+            withContext(Dispatchers.Main) {
+                startActivity(Intent(this@SplashActivity, HomeActivity::class.java))
+                finish()
+            }
+        }
     }
 }
