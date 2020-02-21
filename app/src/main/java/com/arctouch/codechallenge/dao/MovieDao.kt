@@ -1,26 +1,12 @@
-package com.arctouch.codechallenge.api
+package com.arctouch.codechallenge.dao
 
-import com.arctouch.codechallenge.model.GenreResponse
 import com.arctouch.codechallenge.model.Movie
 import com.arctouch.codechallenge.model.UpcomingMoviesResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface TmdbApi {
-
-    companion object {
-        const val URL = "https://api.themoviedb.org/3/"
-        const val API_KEY = "1f54bd990f1cdfb230adb312546d765d"
-        const val DEFAULT_LANGUAGE = "pt-BR"
-        const val DEFAULT_REGION = "US"
-    }
-
-    @GET("genre/movie/list")
-    suspend fun genres(
-            @Query("api_key") apiKey: String,
-            @Query("language") language: String
-    ): GenreResponse
+interface MovieDao {
 
     @GET("movie/upcoming")
     suspend fun upcomingMovies(

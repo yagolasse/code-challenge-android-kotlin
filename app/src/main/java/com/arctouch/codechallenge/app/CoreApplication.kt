@@ -1,7 +1,8 @@
 package com.arctouch.codechallenge.app
 
 import android.app.Application
-import com.arctouch.codechallenge.dependencyinjection.appModule
+import com.arctouch.codechallenge.dependencyinjection.daoModule
+import com.arctouch.codechallenge.dependencyinjection.networkModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -14,7 +15,7 @@ class CoreApplication : Application() {
         startKoin {
             androidLogger()
             androidContext(this@CoreApplication)
-            modules(appModule)
+            modules(listOf(networkModule, daoModule))
         }
     }
 }

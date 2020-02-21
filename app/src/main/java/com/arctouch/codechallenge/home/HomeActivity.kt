@@ -5,6 +5,8 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.arctouch.codechallenge.R
 import com.arctouch.codechallenge.api.TmdbApi
+import com.arctouch.codechallenge.dao.GenreDao
+import com.arctouch.codechallenge.dao.MovieDao
 import com.arctouch.codechallenge.data.Cache
 import kotlinx.android.synthetic.main.home_activity.*
 import kotlinx.coroutines.*
@@ -12,16 +14,17 @@ import org.koin.android.ext.android.inject
 
 class HomeActivity : AppCompatActivity() {
 
-    private val api by inject<TmdbApi>()
+    private val movieDao by inject<MovieDao>()
+    private val genreDao by inject<GenreDao>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home_activity)
 
         GlobalScope.launch(Dispatchers.IO) {
-            val genreResult = async { api.genres(TmdbApi.API_KEY, TmdbApi.DEFAULT_LANGUAGE) }
+            val genreResult = async { genreDao.genres(TmdbApi.API_KEY, TmdbApi.DEFAULT_LANGUAGE) }
             val upcomingMovies = async {
-                api.upcomingMovies(TmdbApi.API_KEY, TmdbApi.DEFAULT_LANGUAGE, 1, TmdbApi.DEFAULT_REGION)
+                movieDao.upcomingMovies(TmdbApi.API_KEY, TmdbApi.DEFAULT_LANGUAGE, 1, TmdbApi.DEFAULT_REGION)
             }
             Cache.cacheGenres(genreResult.await().genres)
             val moviesWithGenres = upcomingMovies.await().results.map { movie ->
