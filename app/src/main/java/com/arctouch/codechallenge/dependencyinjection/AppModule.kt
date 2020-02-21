@@ -1,5 +1,7 @@
 package com.arctouch.codechallenge.dependencyinjection
 
+import com.arctouch.codechallenge.repository.GenreRepository
+import com.arctouch.codechallenge.repository.GenreRepositoryImpl
 import com.arctouch.codechallenge.dao.GenreDao
 import com.arctouch.codechallenge.dao.MovieDao
 import com.arctouch.codechallenge.api.TmdbApi
@@ -21,4 +23,8 @@ val networkModule = module {
 val daoModule = module {
     single { get<Retrofit>().create(GenreDao::class.java) }
     single { get<Retrofit>().create(MovieDao::class.java) }
+}
+
+val repositoryModule = module {
+    single<GenreRepository> { GenreRepositoryImpl() }
 }
