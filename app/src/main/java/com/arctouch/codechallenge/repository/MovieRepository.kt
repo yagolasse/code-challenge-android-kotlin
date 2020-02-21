@@ -1,7 +1,7 @@
 package com.arctouch.codechallenge.repository
 
-import com.arctouch.codechallenge.model.Movie
+import com.arctouch.codechallenge.model.UpcomingMoviesResponse
 
 interface MovieRepository {
-    suspend fun getMovieList(page: Long): List<Movie>
+    suspend fun getMovieList(page: Long): UpcomingMoviesResponse
 }

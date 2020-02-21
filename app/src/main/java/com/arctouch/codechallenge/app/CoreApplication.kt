@@ -1,15 +1,16 @@
 package com.arctouch.codechallenge.app
 
 import android.app.Application
-import com.arctouch.codechallenge.dependencyinjection.daoModule
-import com.arctouch.codechallenge.dependencyinjection.networkModule
-import com.arctouch.codechallenge.dependencyinjection.repositoryModule
-import com.arctouch.codechallenge.dependencyinjection.viewModelModule
+import com.arctouch.codechallenge.dependencyinjection.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 
 class CoreApplication : Application() {
+
+    private val moduleList by lazy(LazyThreadSafetyMode.NONE) {
+        listOf(networkModule, daoModule, repositoryModule, dataSourceModule, viewModelModule)
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -17,7 +18,7 @@ class CoreApplication : Application() {
         startKoin {
             androidLogger()
             androidContext(this@CoreApplication)
-            modules(listOf(networkModule, daoModule, repositoryModule, viewModelModule))
+            modules(moduleList)
         }
     }
 }

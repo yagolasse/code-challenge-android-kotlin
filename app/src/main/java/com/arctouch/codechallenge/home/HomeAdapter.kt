@@ -1,11 +1,13 @@
 package com.arctouch.codechallenge.home
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.paging.PagedListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.arctouch.codechallenge.R
 import com.arctouch.codechallenge.model.Movie
+import com.arctouch.codechallenge.util.MovieDiffUtilChecker
 import com.arctouch.codechallenge.util.MovieImageUrlBuilder
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -23,9 +25,9 @@ class HomeAdapter(private val movies: List<Movie>) : RecyclerView.Adapter<HomeAd
             itemView.releaseDateTextView.text = movie.releaseDate
 
             Glide.with(itemView)
-                .load(movie.posterPath?.let { movieImageUrlBuilder.buildPosterUrl(it) })
-                .apply(RequestOptions().placeholder(R.drawable.ic_image_placeholder))
-                .into(itemView.posterImageView)
+                    .load(movie.posterPath?.let { movieImageUrlBuilder.buildPosterUrl(it) })
+                    .apply(RequestOptions().placeholder(R.drawable.ic_image_placeholder))
+                    .into(itemView.posterImageView)
         }
     }
 
@@ -37,4 +39,18 @@ class HomeAdapter(private val movies: List<Movie>) : RecyclerView.Adapter<HomeAd
     override fun getItemCount() = movies.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(movies[position])
+}
+
+class HomePagedAdapter : PagedListAdapter<Movie, HomeAdapter.ViewHolder>(MovieDiffUtilChecker()) {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeAdapter.ViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.movie_item, parent, false)
+        return HomeAdapter.ViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: HomeAdapter.ViewHolder, position: Int) {
+        val item = getItem(position) ?: return
+        holder.bind(item)
+    }
+
 }
