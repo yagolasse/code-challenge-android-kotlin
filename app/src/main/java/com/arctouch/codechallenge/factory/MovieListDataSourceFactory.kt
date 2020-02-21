@@ -1,4 +1,4 @@
-package com.arctouch.codechallenge
+package com.arctouch.codechallenge.factory
 
 import androidx.paging.DataSource
 import com.arctouch.codechallenge.datasource.MovieListDataSource

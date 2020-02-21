@@ -3,10 +3,10 @@ package com.arctouch.codechallenge.dependencyinjection
 import androidx.lifecycle.LiveData
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import com.arctouch.codechallenge.MovieListDataSourceFactory
-import com.arctouch.codechallenge.api.TmdbApi
+import com.arctouch.codechallenge.constants.Constants.BASE_URL
 import com.arctouch.codechallenge.dao.GenreDao
 import com.arctouch.codechallenge.dao.MovieDao
+import com.arctouch.codechallenge.factory.MovieListDataSourceFactory
 import com.arctouch.codechallenge.model.Movie
 import com.arctouch.codechallenge.repository.GenreRepository
 import com.arctouch.codechallenge.repository.GenreRepositoryImpl
@@ -26,7 +26,7 @@ val networkModule = module {
     factory { OkHttpClient.Builder().build() }
     factory<Converter.Factory> { MoshiConverterFactory.create() }
     single {
-        Retrofit.Builder().baseUrl(TmdbApi.URL).client(get()).addConverterFactory(get()).build()
+        Retrofit.Builder().baseUrl(BASE_URL).client(get()).addConverterFactory(get()).build()
     }
 }
 

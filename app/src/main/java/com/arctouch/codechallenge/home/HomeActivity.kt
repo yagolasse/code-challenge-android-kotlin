@@ -22,6 +22,7 @@ class HomeActivity : AppCompatActivity() {
                 adapter.submitList(dataChunk)
             })
         }
+        
         progressBar.visibility = View.GONE
 
     }

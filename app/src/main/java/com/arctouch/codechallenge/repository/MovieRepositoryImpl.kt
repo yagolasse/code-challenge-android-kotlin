@@ -1,6 +1,8 @@
 package com.arctouch.codechallenge.repository
 
-import com.arctouch.codechallenge.api.TmdbApi
+import com.arctouch.codechallenge.constants.Constants.API_KEY
+import com.arctouch.codechallenge.constants.Constants.DEFAULT_LANGUAGE
+import com.arctouch.codechallenge.constants.Constants.DEFAULT_REGION
 import com.arctouch.codechallenge.dao.MovieDao
 import com.arctouch.codechallenge.model.UpcomingMoviesResponse
 import org.koin.core.KoinComponent
@@ -13,10 +15,10 @@ class MovieRepositoryImpl : KoinComponent, MovieRepository {
 
     override suspend fun getMovieList(page: Long): UpcomingMoviesResponse {
         val upcomingMoviesResponse = movieDao.upcomingMovies(
-                TmdbApi.API_KEY,
-                TmdbApi.DEFAULT_LANGUAGE,
+                API_KEY,
+                DEFAULT_LANGUAGE,
                 page,
-                TmdbApi.DEFAULT_REGION
+                DEFAULT_REGION
         )
 
         val genres = genreRepository.getGenreList()
