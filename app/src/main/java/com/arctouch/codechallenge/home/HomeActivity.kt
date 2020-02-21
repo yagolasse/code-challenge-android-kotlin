@@ -4,34 +4,26 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.arctouch.codechallenge.R
-import com.arctouch.codechallenge.api.TmdbApi
-import com.arctouch.codechallenge.dao.MovieDao
-import com.arctouch.codechallenge.data.Cache
-import com.arctouch.codechallenge.repository.GenreRepository
+import com.arctouch.codechallenge.repository.MovieRepository
 import kotlinx.android.synthetic.main.home_activity.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 
 class HomeActivity : AppCompatActivity() {
 
-    private val movieDao by inject<MovieDao>()
-    private val genreRepository by inject<GenreRepository>()
+    private val movieRepository by inject<MovieRepository>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home_activity)
 
         GlobalScope.launch(Dispatchers.IO) {
-            val genreResult = async { genreRepository.getGenreList() }
-            val upcomingMovies = async {
-                movieDao.upcomingMovies(TmdbApi.API_KEY, TmdbApi.DEFAULT_LANGUAGE, 1, TmdbApi.DEFAULT_REGION)
-            }
-            Cache.cacheGenres(genreResult.await())
-            val moviesWithGenres = upcomingMovies.await().results.map { movie ->
-                movie.copy(genres = Cache.genres.filter { movie.genreIds?.contains(it.id) == true })
-            }
+            val movies = movieRepository.getMovieList(1)
             withContext(Dispatchers.Main) {
-                recyclerView.adapter = HomeAdapter(moviesWithGenres)
+                recyclerView.adapter = HomeAdapter(movies)
                 progressBar.visibility = View.GONE
             }
         }

@@ -1,10 +1,12 @@
 package com.arctouch.codechallenge.dependencyinjection
 
-import com.arctouch.codechallenge.repository.GenreRepository
-import com.arctouch.codechallenge.repository.GenreRepositoryImpl
+import com.arctouch.codechallenge.api.TmdbApi
 import com.arctouch.codechallenge.dao.GenreDao
 import com.arctouch.codechallenge.dao.MovieDao
-import com.arctouch.codechallenge.api.TmdbApi
+import com.arctouch.codechallenge.repository.GenreRepository
+import com.arctouch.codechallenge.repository.GenreRepositoryImpl
+import com.arctouch.codechallenge.repository.MovieRepository
+import com.arctouch.codechallenge.repository.MovieRepositoryImpl
 import okhttp3.OkHttpClient
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -27,4 +29,5 @@ val daoModule = module {
 
 val repositoryModule = module {
     single<GenreRepository> { GenreRepositoryImpl() }
+    single<MovieRepository> { MovieRepositoryImpl() }
 }
