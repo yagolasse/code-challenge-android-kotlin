@@ -14,12 +14,7 @@ class MovieRepositoryImpl : KoinComponent, MovieRepository {
     private val movieDao by inject<MovieDao>()
 
     override suspend fun getMovieList(page: Long): UpcomingMoviesResponse {
-        val upcomingMoviesResponse = movieDao.upcomingMovies(
-                API_KEY,
-                DEFAULT_LANGUAGE,
-                page,
-                DEFAULT_REGION
-        )
+        val upcomingMoviesResponse = movieDao.upcomingMovies(API_KEY, DEFAULT_LANGUAGE, page, DEFAULT_REGION)
 
         val genres = genreRepository.getGenreList()
 
