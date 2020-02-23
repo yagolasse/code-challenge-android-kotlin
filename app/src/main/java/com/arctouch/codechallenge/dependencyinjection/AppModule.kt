@@ -1,5 +1,6 @@
 package com.arctouch.codechallenge.dependencyinjection
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
@@ -42,10 +43,10 @@ val repositoryModule = module {
 }
 
 val dataSourceModule = module {
-    single { PagedList.Config.Builder().setEnablePlaceholders(false).setPageSize(20).build() }
-    single { (scope: CoroutineScope) -> MovieListDataSourceFactory(scope) }
-    factory<LiveData<PagedList<Movie>>> { (scope: CoroutineScope) ->
-        val dataSourceFactory = get<MovieListDataSourceFactory> { parametersOf(scope) }
+    factory { PagedList.Config.Builder().setEnablePlaceholders(false).setPageSize(20).build() }
+    factory { (scope: CoroutineScope, query: String?) -> MovieListDataSourceFactory(scope, query) }
+    factory<LiveData<PagedList<Movie>>> { (scope: CoroutineScope, query: String?) ->
+        val dataSourceFactory = get<MovieListDataSourceFactory> { parametersOf(scope, query) }
         val config = get<PagedList.Config>()
         LivePagedListBuilder<Long, Movie>(dataSourceFactory, config).build()
     }

@@ -2,6 +2,8 @@ package com.arctouch.codechallenge.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -27,6 +29,21 @@ class HomeActivity : AppCompatActivity() {
         }
 
         recyclerView.adapter = adapter
+
+        searchEditText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                movieListViewModel.queryLiveData.value = s?.toString()
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // Not used by now
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // Not used by now
+            }
+
+        })
 
         movieListViewModel.movieListLiveData.observe(this, Observer { dataChunk ->
             adapter.submitList(dataChunk)

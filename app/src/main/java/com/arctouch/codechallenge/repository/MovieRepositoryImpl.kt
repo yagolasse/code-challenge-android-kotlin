@@ -5,7 +5,7 @@ import com.arctouch.codechallenge.constants.Constants.DEFAULT_LANGUAGE
 import com.arctouch.codechallenge.constants.Constants.DEFAULT_REGION
 import com.arctouch.codechallenge.dao.MovieDao
 import com.arctouch.codechallenge.model.Movie
-import com.arctouch.codechallenge.model.UpcomingMoviesResponse
+import com.arctouch.codechallenge.model.MoviesResponse
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
@@ -16,15 +16,21 @@ class MovieRepositoryImpl : KoinComponent, MovieRepository {
 
     override suspend fun getMovie(id: Long): Movie = movieDao.movie(id, API_KEY, DEFAULT_LANGUAGE)
 
-    override suspend fun getMovieList(page: Long): UpcomingMoviesResponse {
+    override suspend fun getUpcomingMovieList(page: Long): MoviesResponse {
         val upcomingMoviesResponse = movieDao.upcomingMovies(API_KEY, DEFAULT_LANGUAGE, page, DEFAULT_REGION)
+        return upcomingMoviesResponse.copy(results = bindGenresToMovies(upcomingMoviesResponse.results))
+    }
 
+    override suspend fun moviesByQuery(page: Long, query: String): MoviesResponse {
+        val upcomingMoviesResponse = movieDao.moviesByQuery(API_KEY, DEFAULT_LANGUAGE, page, query, DEFAULT_REGION)
+        return upcomingMoviesResponse.copy(results = bindGenresToMovies(upcomingMoviesResponse.results))
+    }
+
+    private suspend fun bindGenresToMovies(movies: List<Movie>): List<Movie> {
         val genres = genreRepository.getGenreList()
 
-        val moviesWithGenres = upcomingMoviesResponse.results.map { movie ->
+        return movies.map { movie ->
             movie.copy(genres = genres.filter { movie.genreIds?.contains(it.id) == true })
         }
-
-        return upcomingMoviesResponse.copy(results = moviesWithGenres)
     }
 }
