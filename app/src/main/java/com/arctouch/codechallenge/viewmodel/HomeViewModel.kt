@@ -10,6 +10,7 @@ import org.koin.core.parameter.parametersOf
 class HomeViewModel : ViewModel(), KoinComponent {
 
     private val queryLiveData = MutableLiveData<String>(null)
+    val latestQuery get() = queryLiveData.value
 
     val movieListLiveData: LiveData<PagedList<Movie>> = queryLiveData.switchMap { query ->
         get<LiveData<PagedList<Movie>>> { parametersOf(viewModelScope, query) }

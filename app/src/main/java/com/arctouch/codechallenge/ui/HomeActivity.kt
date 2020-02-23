@@ -53,6 +53,10 @@ class HomeActivity : AppCompatActivity(), CoroutineScope, SearchView.OnQueryText
         } ?: return false
 
         searchView = (searchMenuItem.actionView as? SearchView)?.apply {
+            if (movieListViewModel.latestQuery != null) {
+                searchMenuItem.expandActionView()
+                setQuery(movieListViewModel.latestQuery, false)
+            }
             setOnQueryTextListener(this@HomeActivity)
         } ?: return false
 
