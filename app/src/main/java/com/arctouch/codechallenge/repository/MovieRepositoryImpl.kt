@@ -4,6 +4,7 @@ import com.arctouch.codechallenge.constants.Constants.API_KEY
 import com.arctouch.codechallenge.constants.Constants.DEFAULT_LANGUAGE
 import com.arctouch.codechallenge.constants.Constants.DEFAULT_REGION
 import com.arctouch.codechallenge.dao.MovieDao
+import com.arctouch.codechallenge.model.Movie
 import com.arctouch.codechallenge.model.UpcomingMoviesResponse
 import org.koin.core.KoinComponent
 import org.koin.core.inject
@@ -12,6 +13,8 @@ class MovieRepositoryImpl : KoinComponent, MovieRepository {
 
     private val genreRepository by inject<GenreRepository>()
     private val movieDao by inject<MovieDao>()
+
+    override suspend fun getMovie(id: Long): Movie = movieDao.movie(id, API_KEY, DEFAULT_LANGUAGE)
 
     override suspend fun getMovieList(page: Long): UpcomingMoviesResponse {
         val upcomingMoviesResponse = movieDao.upcomingMovies(API_KEY, DEFAULT_LANGUAGE, page, DEFAULT_REGION)

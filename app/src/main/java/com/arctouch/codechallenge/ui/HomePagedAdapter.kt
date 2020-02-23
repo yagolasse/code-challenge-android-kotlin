@@ -1,4 +1,4 @@
-package com.arctouch.codechallenge.home
+package com.arctouch.codechallenge.ui
 
 import android.view.LayoutInflater
 import android.view.View
@@ -13,16 +13,32 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.movie_item.view.*
 
-class HomeAdapter(private val movies: List<Movie>) : RecyclerView.Adapter<HomeAdapter.ViewHolder>() {
+class HomePagedAdapter(
+        private val onMovieClickListener: (Int) -> Unit
+) : PagedListAdapter<Movie, HomePagedAdapter.ViewHolder>(MovieDiffUtilChecker()) {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.movie_item, parent, false)
+        return ViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val item = getItem(position) ?: return
+        holder.bind(item, onMovieClickListener)
+    }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private val movieImageUrlBuilder = MovieImageUrlBuilder()
 
-        fun bind(movie: Movie) {
+        fun bind(movie: Movie, onMovieClickListener: (Int) -> Unit) {
             itemView.titleTextView.text = movie.title
             itemView.genresTextView.text = movie.genres?.joinToString(separator = ", ") { it.name }
             itemView.releaseDateTextView.text = movie.releaseDate
+
+            itemView.setOnClickListener {
+                onMovieClickListener(movie.id)
+            }
 
             Glide.with(itemView)
                     .load(movie.posterPath?.let { movieImageUrlBuilder.buildPosterUrl(it) })
@@ -30,27 +46,4 @@ class HomeAdapter(private val movies: List<Movie>) : RecyclerView.Adapter<HomeAd
                     .into(itemView.posterImageView)
         }
     }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.movie_item, parent, false)
-        return ViewHolder(view)
-    }
-
-    override fun getItemCount() = movies.size
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(movies[position])
-}
-
-class HomePagedAdapter : PagedListAdapter<Movie, HomeAdapter.ViewHolder>(MovieDiffUtilChecker()) {
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeAdapter.ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.movie_item, parent, false)
-        return HomeAdapter.ViewHolder(view)
-    }
-
-    override fun onBindViewHolder(holder: HomeAdapter.ViewHolder, position: Int) {
-        val item = getItem(position) ?: return
-        holder.bind(item)
-    }
-
 }

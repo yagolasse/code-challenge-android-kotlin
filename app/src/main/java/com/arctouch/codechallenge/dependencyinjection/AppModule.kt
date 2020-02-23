@@ -12,6 +12,7 @@ import com.arctouch.codechallenge.repository.GenreRepository
 import com.arctouch.codechallenge.repository.GenreRepositoryImpl
 import com.arctouch.codechallenge.repository.MovieRepository
 import com.arctouch.codechallenge.repository.MovieRepositoryImpl
+import com.arctouch.codechallenge.viewmodel.DetailViewModel
 import com.arctouch.codechallenge.viewmodel.HomeViewModel
 import kotlinx.coroutines.CoroutineScope
 import okhttp3.OkHttpClient
@@ -52,4 +53,5 @@ val dataSourceModule = module {
 
 val viewModelModule = module {
     viewModel { HomeViewModel() }
+    viewModel { DetailViewModel() }
 }
