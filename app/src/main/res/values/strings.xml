@@ -2,6 +2,8 @@
     <string name="app_name">Code Challenge</string>
     <string name="movie_and_genres">%s - %s</string>
     <string name="poster_transition_name">posterTransitionName</string>
-    <string name="to_search">Pesquisar</string>
-    <string name="an_error_has_ocurred">Ocorreu um erro</string>
+    <string name="to_search">Search</string>
+    <string name="an_error_has_occurred_try_again">An error has occurred. Try again later</string>
+    <string name="we_had_some_trouble_retrieving_more_movies">We had some trouble retrieving more movies</string>
+    <string name="list_is_empty">List is empty</string>
 </resources>

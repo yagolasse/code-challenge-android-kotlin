@@ -40,6 +40,15 @@ class SingleLiveEvent<T> : MutableLiveData<T>() {
         value = null
     }
 
+
+    /**
+     * Used for cases where T is Void, to make calls cleaner.
+     */
+    @MainThread
+    fun postCall() {
+        postValue(null)
+    }
+
     companion object {
 
         private val TAG = "SingleLiveEvent"
