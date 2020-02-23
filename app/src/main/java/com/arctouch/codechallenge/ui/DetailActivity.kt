@@ -5,9 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.arctouch.codechallenge.R
 import com.arctouch.codechallenge.util.MovieImageUrlBuilder
+import com.arctouch.codechallenge.util.loads
+import com.arctouch.codechallenge.util.on
 import com.arctouch.codechallenge.viewmodel.DetailViewModel
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.activity_detail.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -36,10 +36,9 @@ class DetailActivity : AppCompatActivity() {
             genresTextView.text = movie.genres?.joinToString(separator = ", ") { it.name }
             releaseDateTextView.text = movie.releaseDate
 
-            Glide.with(this)
-                    .load(movie.posterPath?.let { movieImageUrlBuilder.buildPosterUrl(it) })
-                    .apply(RequestOptions().placeholder(R.drawable.ic_image_placeholder))
-                    .into(posterImageView)
+            val posterUrl = movie.posterPath?.let { movieImageUrlBuilder.buildPosterUrl(it) }
+
+            this loads posterUrl on posterImageView
         })
 
     }

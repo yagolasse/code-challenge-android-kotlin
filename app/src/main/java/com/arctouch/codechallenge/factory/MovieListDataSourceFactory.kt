@@ -29,5 +29,4 @@ class MovieListDataSourceFactory(
             _dataSourceLiveData.postValue(it)
         }
     }
-
 }
