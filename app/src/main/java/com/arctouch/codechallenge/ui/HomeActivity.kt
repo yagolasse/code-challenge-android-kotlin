@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
@@ -38,11 +39,19 @@ class HomeActivity : AppCompatActivity(), CoroutineScope, SearchView.OnQueryText
 
         recyclerView.adapter = adapter
 
-        movieListViewModel.movieListLiveData.observe(this, Observer { dataChunk ->
-            adapter.submitList(dataChunk)
-        })
+        with(movieListViewModel) {
+            movieListLiveData.observe(this@HomeActivity, Observer { dataChunk ->
+                adapter.submitList(dataChunk)
+            })
 
-        progressBar.visibility = View.GONE
+            initialLoadingLiveData.observe(this@HomeActivity, Observer { isLoading ->
+                progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+            })
+
+            initialLoadErrorEvent.observe(this@HomeActivity, Observer {
+                Toast.makeText(this@HomeActivity, R.string.an_error_has_ocurred, Toast.LENGTH_SHORT).show()
+            })
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

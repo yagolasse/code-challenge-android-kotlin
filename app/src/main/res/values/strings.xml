@@ -3,4 +3,5 @@
     <string name="movie_and_genres">%s - %s</string>
     <string name="poster_transition_name">posterTransitionName</string>
     <string name="to_search">Pesquisar</string>
+    <string name="an_error_has_ocurred">Ocorreu um erro</string>
 </resources>
