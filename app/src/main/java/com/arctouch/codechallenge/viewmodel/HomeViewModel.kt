@@ -1,9 +1,7 @@
 package com.arctouch.codechallenge.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.switchMap
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
+import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.arctouch.codechallenge.factory.MovieListDataSourceFactory
 import com.arctouch.codechallenge.model.Movie
@@ -33,6 +31,7 @@ class HomeViewModel : ViewModel(), KoinComponent {
     val pageRequestLoadingLiveData: LiveData<Boolean> = dataSourceLiveData.switchMap { it.pageRequestLoadingLiveData }
     val initialLoadErrorEvent: LiveData<Unit> = dataSourceLiveData.switchMap { it.initialLoadErrorEvent }
     val pageLoadErrorEvent: LiveData<Unit> = dataSourceLiveData.switchMap { it.pageLoadErrorEvent }
+    val listIsEmptyLiveData: LiveData<Boolean> = dataSourceLiveData.switchMap { it.listIsEmptyLiveData }
 
     init {
         queryEvent.postCall()

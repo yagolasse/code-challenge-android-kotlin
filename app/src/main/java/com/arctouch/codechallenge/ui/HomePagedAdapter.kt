@@ -3,6 +3,7 @@ package com.arctouch.codechallenge.ui
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.paging.PagedList
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.arctouch.codechallenge.R
@@ -14,7 +15,7 @@ import com.arctouch.codechallenge.util.loads
 import kotlinx.android.synthetic.main.movie_item.view.*
 
 class HomePagedAdapter(
-        private val onMovieClickListener: (Int) -> Unit
+        private val onMovieClickListener: OnMovieClickListener
 ) : PagedListAdapter<Movie, HomePagedAdapter.ViewHolder>(MovieDiffUtilChecker()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -27,18 +28,22 @@ class HomePagedAdapter(
         holder.bind(item, onMovieClickListener)
     }
 
+    interface OnMovieClickListener {
+        fun onMovieClick(id: Int)
+    }
+
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private val movieImageUrlBuilder = MovieImageUrlBuilder()
 
-        fun bind(movie: Movie, onMovieClickListener: (Int) -> Unit) {
+        fun bind(movie: Movie, onMovieClickListener: OnMovieClickListener) {
 
             with(itemView) {
                 titleTextView.text = movie.title
                 genresTextView.text = movie.genres?.joinToString(separator = ", ") { it.name }
                 releaseDateTextView.text = movie.releaseDate
                 setOnClickListener {
-                    onMovieClickListener(movie.id)
+                    onMovieClickListener.onMovieClick(movie.id)
                 }
                 val posterUrl = movie.posterPath?.let { movieImageUrlBuilder.buildPosterUrl(it) }
 

@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PageKeyedDataSource
 import com.arctouch.codechallenge.model.Movie
+import com.arctouch.codechallenge.model.MoviesResponse
 import com.arctouch.codechallenge.repository.MovieRepository
 import com.arctouch.codechallenge.util.SingleLiveEvent
 import kotlinx.coroutines.*
@@ -22,6 +23,9 @@ abstract class MovieListDataSource(
     private val _pageRequestLoadingLiveData = MutableLiveData<Boolean>(false)
     val pageRequestLoadingLiveData: LiveData<Boolean> get() = _pageRequestLoadingLiveData
 
+    private val _listIsEmptyLiveData = MutableLiveData<Boolean>(false)
+    val listIsEmptyLiveData: LiveData<Boolean> = _listIsEmptyLiveData
+
     private val initialLoadCoroutineExceptionHandler = CoroutineExceptionHandler { _, _ ->
         initialLoadErrorEvent.call()
         _initialLoadingLiveData.value = false
@@ -35,14 +39,17 @@ abstract class MovieListDataSource(
     val initialLoadErrorEvent = SingleLiveEvent<Unit>()
     val pageLoadErrorEvent = SingleLiveEvent<Unit>()
 
-    abstract suspend fun loadInitialFromService(params: LoadInitialParams<Long>, callback: LoadInitialCallback<Long, Movie>)
-    abstract suspend fun loadPageFromService(currentPageKey: Long, adjacentPageKey: Long, callback: LoadCallback<Long, Movie>)
+    abstract suspend fun loadInitialFromService(): MoviesResponse
+    abstract suspend fun loadPageFromService(currentPageKey: Long): MoviesResponse
 
     override fun loadInitial(params: LoadInitialParams<Long>, callback: LoadInitialCallback<Long, Movie>) {
         scope.launch(Dispatchers.Main + initialLoadCoroutineExceptionHandler) {
             _initialLoadingLiveData.value = true
             withContext(Dispatchers.IO + initialLoadCoroutineExceptionHandler) {
-                loadInitialFromService(params, callback)
+                val (currentPage, movieList, _, movieCount) = loadInitialFromService()
+                val currentPosition = if (movieList.size == movieCount) 0 else currentPage
+                _listIsEmptyLiveData.postValue(movieList.isEmpty())
+                callback.onResult(movieList, currentPosition, movieCount, currentPage - 1L, currentPage + 1L)
             }
             _initialLoadingLiveData.value = false
         }
@@ -63,7 +70,8 @@ abstract class MovieListDataSource(
         scope.launch(Dispatchers.Main + pageLoadCoroutineExceptionHandler) {
             _pageRequestLoadingLiveData.value = true
             withContext(Dispatchers.IO + pageLoadCoroutineExceptionHandler) {
-                loadPageFromService(currentPageKey, adjacentPageKey, callback)
+                val movieList = loadPageFromService(currentPageKey).results
+                callback.onResult(movieList, adjacentPageKey)
             }
             _pageRequestLoadingLiveData.value = false
         }

@@ -23,7 +23,7 @@ import org.koin.android.viewmodel.ext.android.viewModel
 import kotlin.coroutines.CoroutineContext
 
 
-class HomeActivity : AppCompatActivity(), CoroutineScope, SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
+class HomeActivity : AppCompatActivity(), CoroutineScope, SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener, HomePagedAdapter.OnMovieClickListener {
 
     private val movieListViewModel by viewModel<HomeViewModel>()
     override val coroutineContext: CoroutineContext get() = Dispatchers.Main
@@ -34,19 +34,18 @@ class HomeActivity : AppCompatActivity(), CoroutineScope, SearchView.OnQueryText
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home_activity)
 
-        val adapter = HomePagedAdapter { movieId ->
-            val intent = Intent(this, DetailActivity::class.java).apply {
-                putExtra(MOVIE_ID_KEY, movieId)
-            }
-            startActivity(intent)
+        val adapter = HomePagedAdapter(this).also {
+            recyclerView.adapter = it
         }
-
-        recyclerView.adapter = adapter
 
         with(movieListViewModel) {
             movieListLiveData.observe(this@HomeActivity, Observer { dataChunk ->
                 showErrorView(false)
                 adapter.submitList(dataChunk)
+            })
+
+            listIsEmptyLiveData.observe(this@HomeActivity, Observer { isEmpty ->
+                showEmptyListView(isEmpty)
             })
 
             initialLoadingLiveData.observe(this@HomeActivity, Observer { isLoading ->
@@ -130,6 +129,13 @@ class HomeActivity : AppCompatActivity(), CoroutineScope, SearchView.OnQueryText
         return true
     }
 
+    override fun onMovieClick(id: Int) {
+        val intent = Intent(this, DetailActivity::class.java).apply {
+            putExtra(MOVIE_ID_KEY, id)
+        }
+        startActivity(intent)
+    }
+
     private fun showErrorView(shouldShow: Boolean) {
         if (shouldShow) {
             stateTextView.setText(R.string.an_error_has_occurred_try_again)
@@ -153,5 +159,4 @@ class HomeActivity : AppCompatActivity(), CoroutineScope, SearchView.OnQueryText
             recyclerView.visibility = View.VISIBLE
         }
     }
-
 }
