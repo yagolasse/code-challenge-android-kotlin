@@ -18,6 +18,8 @@ buildscript {
     ext.glide_version = '4.11.0'
     ext.koin_version = '2.0.1'
 
+    ext.fadingedgelayout_version = '1.0.0'
+
     repositories {
         google()
         jcenter()
