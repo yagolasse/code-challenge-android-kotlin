@@ -20,6 +20,11 @@ class DetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
 
+        supportActionBar?.run {
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayShowHomeEnabled(true)
+        }
+
         val movieId = intent.getIntExtra(MOVIE_ID_KEY, -1)
 
         if (movieId == -1) return
@@ -37,6 +42,11 @@ class DetailActivity : AppCompatActivity() {
                     .into(posterImageView)
         })
 
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
 
     companion object {
