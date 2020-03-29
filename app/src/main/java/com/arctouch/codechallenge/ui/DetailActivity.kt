@@ -12,14 +12,13 @@ import com.arctouch.codechallenge.util.withRoundCornersOn
 import com.arctouch.codechallenge.viewmodel.DetailViewModel
 import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.koin.android.ext.android.get
+import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.getViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 class DetailActivity : AppCompatActivity() {
-
-
-    private val movieImageUrlBuilder = MovieImageUrlBuilder()
 
     @ExperimentalCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,13 +35,15 @@ class DetailActivity : AppCompatActivity() {
         if (movieId == -1) return
 
         getViewModel<DetailViewModel> { parametersOf(movieId) }.also { viewModel ->
-            viewModel.errorLiveData.observe(this@DetailActivity, Observer {
+            val movieImageUrlBuilder = get<MovieImageUrlBuilder>()
+
+            viewModel.errorLiveData.observe(this, Observer {
                 stateGroup.visibility = View.VISIBLE
                 dataGroup.visibility = View.GONE
                 progressBar.visibility = View.GONE
             })
 
-            viewModel.movieLiveData.observe(this@DetailActivity, Observer { movie ->
+            viewModel.movieLiveData.observe(this, Observer { movie ->
                 titleTextView.text = movie.title
                 genresTextView.text = movie.genres?.joinToString(separator = ", ") { it.name }
                 releaseDateTextView.text = movie.releaseDate
