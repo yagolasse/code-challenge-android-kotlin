@@ -11,13 +11,17 @@ import com.arctouch.codechallenge.util.on
 import com.arctouch.codechallenge.util.withRoundCornersOn
 import com.arctouch.codechallenge.viewmodel.DetailViewModel
 import kotlinx.android.synthetic.main.activity_detail.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.koin.android.viewmodel.ext.android.getViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class DetailActivity : AppCompatActivity() {
 
-    private val detailViewModel by viewModel<DetailViewModel>()
+
     private val movieImageUrlBuilder = MovieImageUrlBuilder()
 
+    @ExperimentalCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
@@ -31,14 +35,14 @@ class DetailActivity : AppCompatActivity() {
 
         if (movieId == -1) return
 
-        with(detailViewModel) {
-            errorEvent.observe(this@DetailActivity, Observer {
+        getViewModel<DetailViewModel> { parametersOf(movieId) }.also { viewModel ->
+            viewModel.errorLiveData.observe(this@DetailActivity, Observer {
                 stateGroup.visibility = View.VISIBLE
                 dataGroup.visibility = View.GONE
                 progressBar.visibility = View.GONE
             })
 
-            movieLiveData.observe(this@DetailActivity, Observer { movie ->
+            viewModel.movieLiveData.observe(this@DetailActivity, Observer { movie ->
                 titleTextView.text = movie.title
                 genresTextView.text = movie.genres?.joinToString(separator = ", ") { it.name }
                 releaseDateTextView.text = movie.releaseDate
@@ -54,8 +58,6 @@ class DetailActivity : AppCompatActivity() {
                 stateGroup.visibility = View.GONE
                 progressBar.visibility = View.GONE
             })
-
-            loadMovie(movieId)
         }
     }
 

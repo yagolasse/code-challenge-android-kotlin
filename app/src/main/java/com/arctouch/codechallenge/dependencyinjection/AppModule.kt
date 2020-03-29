@@ -15,6 +15,7 @@ import com.arctouch.codechallenge.repository.MovieRepositoryImpl
 import com.arctouch.codechallenge.viewmodel.DetailViewModel
 import com.arctouch.codechallenge.viewmodel.HomeViewModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import okhttp3.OkHttpClient
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -50,7 +51,8 @@ val dataSourceModule = module {
     }
 }
 
+@ExperimentalCoroutinesApi
 val viewModelModule = module {
     viewModel { HomeViewModel() }
-    viewModel { DetailViewModel() }
+    viewModel { (id: Int) -> DetailViewModel(id) }
 }
