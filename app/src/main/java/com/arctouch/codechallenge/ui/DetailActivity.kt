@@ -52,8 +52,8 @@ class DetailActivity : AppCompatActivity() {
                 val posterUrl = movie.posterPath?.let { movieImageUrlBuilder.buildPosterUrl(it) }
                 val backdropUrl = movie.backdropPath?.let { movieImageUrlBuilder.buildBackdropUrl(it) }
 
-                this@DetailActivity loads backdropUrl on backdropImageView
-                this@DetailActivity loads posterUrl withRoundCornersOn posterImageView
+                this loads backdropUrl on backdropImageView
+                this loads posterUrl withRoundCornersOn posterImageView
 
                 dataGroup.visibility = View.VISIBLE
                 stateGroup.visibility = View.GONE
